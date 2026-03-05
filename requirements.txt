@@ -1,0 +1,22 @@
+# torch
+# transformers
+# sentence-transformers
+# scikit-learn
+# streamlit
+# requests
+
+
+# Core
+streamlit>=1.32.0
+requests>=2.31.0
+scikit-learn>=1.4.0
+sentence-transformers>=2.6.0
+
+# GPU path (only needed if CUDA is available)
+# torch>=2.1.0          # install separately: https://pytorch.org/get-started/locally/
+# transformers>=4.40.0
+# bitsandbytes>=0.43.0  # 4-bit quantisation (Linux/CUDA only)
+# accelerate>=0.27.0
+
+# HF API path (no GPU)
+# No extra packages needed — uses `requests` above.
