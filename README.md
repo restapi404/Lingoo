@@ -58,21 +58,3 @@ pytest
 
 The tests exercise the culture detector, utility functions, and the
 `adapt_story` interface (with model calls stubbed).
-
-## Extending the project
-
-- Improve the `story_utils` functions with real NLP or knowledge graphs.
-- Expand the cultural symbol database and mapping engine.
-- Add moral drift detection using a fine-tuned classifier.
-- Integrate with external EdTech platforms or mobile apps.
-
-## Notes for presentation
-
-* The frontend demonstrates full flow from user input to adapted output.
-* Symbol mapping and drift detection are currently simplistic stubs; the
-  architecture supports swapping in more advanced components.
-* The code is structured to allow easy unit testing and future refactoring.
-
----
-
-Good luck with your submission!
