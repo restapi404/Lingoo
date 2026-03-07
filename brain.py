@@ -112,9 +112,8 @@ def _generate_local(prompt: str, max_new_tokens: int = 700) -> str:
 # 3b. API path  – HuggingFace Inference API (CPU / no GPU)
 # ─────────────────────────────────────────────────────────────────────────────
 
-HF_API_BASE    = "https://api-inference.huggingface.co/models"
-HF_PRIMARY     = "Qwen/Qwen2.5-3B-Instruct"
-HF_FALLBACK    = "mistralai/Mistral-7B-Instruct-v0.3"
+HF_PRIMARY     = "google/gemma-3-4b-it"
+HF_FALLBACK    = "google/gemma-3-1b-it"
 
 
 def _hf_headers() -> dict:
@@ -135,7 +134,7 @@ def _generate_hf(prompt: str, model: str, max_new_tokens: int = 700) -> str:
                 {"role": "system", "content": "You are Lingoo, an expert in cross-cultural storytelling."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=max_new_tokens,  # Note: max_tokens, NOT max_new_tokens
+            max_tokens=max_new_tokens,
             temperature=0.7,
             top_p=0.9,
         )
