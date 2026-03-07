@@ -112,8 +112,8 @@ def _generate_local(prompt: str, max_new_tokens: int = 700) -> str:
 # 3b. API path  – HuggingFace Inference API (CPU / no GPU)
 # ─────────────────────────────────────────────────────────────────────────────
 
-HF_PRIMARY     = "google/gemma-3-4b-it"
-HF_FALLBACK    = "google/gemma-3-1b-it"
+HF_PRIMARY     = "mistralai/Mistral-7B-Instruct-v0.2"
+HF_FALLBACK    = "HuggingFaceH4/zephyr-7b-beta"
 
 
 def _hf_headers() -> dict:
