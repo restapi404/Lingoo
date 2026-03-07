@@ -118,33 +118,30 @@ HF_FALLBACK    = "mistralai/Mistral-7B-Instruct-v0.3"
 
 
 def _hf_headers() -> dict:
-    token = os.environ.get("HF_TOKEN", "<your-actual-hf-token>")
-    return {"Authorization": f"Bearer {token}"} if token else {}
+    """Legacy function - no longer used with InferenceClient."""
+    return {}
 
 
 def _generate_hf(prompt: str, model: str, max_new_tokens: int = 700) -> str:
-    url = f"{HF_API_BASE}/{model}"
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": max_new_tokens,
-            "temperature":    0.7,
-            "top_p":          0.9,
-            "do_sample":      True,
-            "return_full_text": False,
-        },
-    }
-    resp = requests.post(url, headers=_hf_headers(), json=payload, timeout=120)
-
-    if resp.status_code == 503:
-        raise RuntimeError(f"Model '{model}' is loading on HF servers – retry in ~20 s.")
-    if resp.status_code != 200:
-        raise RuntimeError(f"HF API [{resp.status_code}]: {resp.text[:300]}")
-
-    data = resp.json()
-    if isinstance(data, list) and data:
-        return data[0].get("generated_text", "").strip()
-    raise RuntimeError(f"Unexpected HF API response shape: {data}")
+    """Generate text using HuggingFace InferenceClient."""
+    from huggingface_hub import InferenceClient
+    
+    client = InferenceClient(api_key=os.environ.get("HF_TOKEN"))
+    
+    try:
+        message = client.chat_completion(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are Lingoo, an expert in cross-cultural storytelling."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=max_new_tokens,  # Note: max_tokens, NOT max_new_tokens
+            temperature=0.7,
+            top_p=0.9,
+        )
+        return message.choices[0].message.content.strip()
+    except Exception as e:
+        raise RuntimeError(f"HF client failed for model '{model}': {e}")
 
 
 def _generate_api(prompt: str, max_new_tokens: int = 700) -> str:
