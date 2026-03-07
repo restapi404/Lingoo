@@ -19,6 +19,7 @@ import requests
 import streamlit as st
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
+from huggingface_hub import InferenceClient
 
 from wikidata_fetch import search_wikidata, fetch_wikidata, extract_culture_info
 
@@ -116,6 +117,8 @@ HF_API_BASE    = "https://api-inference.huggingface.co/models"
 HF_PRIMARY     = "Qwen/Qwen2.5-3B-Instruct"
 HF_FALLBACK    = "mistralai/Mistral-7B-Instruct-v0.3"
 
+# HuggingFace client – reads token from environment automatically
+HF_CLIENT = InferenceClient(token=os.environ.get("HF_TOKEN"))
 
 def _hf_headers() -> dict:
     token = os.environ.get("HF_TOKEN", "<your-actual-hf-token>")
@@ -123,28 +126,21 @@ def _hf_headers() -> dict:
 
 
 def _generate_hf(prompt: str, model: str, max_new_tokens: int = 700) -> str:
-    url = f"{HF_API_BASE}/{model}"
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": max_new_tokens,
-            "temperature":    0.7,
-            "top_p":          0.9,
-            "do_sample":      True,
-            "return_full_text": False,
-        },
-    }
-    resp = requests.post(url, headers=_hf_headers(), json=payload, timeout=120)
-
-    if resp.status_code == 503:
-        raise RuntimeError(f"Model '{model}' is loading on HF servers – retry in ~20 s.")
-    if resp.status_code != 200:
-        raise RuntimeError(f"HF API [{resp.status_code}]: {resp.text[:300]}")
-
-    data = resp.json()
-    if isinstance(data, list) and data:
-        return data[0].get("generated_text", "").strip()
-    raise RuntimeError(f"Unexpected HF API response shape: {data}")
+    """
+    Uses HuggingFace Hub InferenceClient to generate text.
+    """
+    try:
+        response = HF_CLIENT.chat_completion(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            max_new_tokens=max_new_tokens,
+            temperature=0.7,
+            top_p=0.9,
+        )
+        # Extract text from response
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        raise RuntimeError(f"HF client failed for model '{model}': {e}")
 
 
 def _generate_api(prompt: str, max_new_tokens: int = 700) -> str:
