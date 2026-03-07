@@ -118,7 +118,7 @@ HF_FALLBACK    = "mistralai/Mistral-7B-Instruct-v0.3"
 
 
 def _hf_headers() -> dict:
-    token = os.environ.get("HF_TOKEN", "")
+    token = os.environ.get("HF_TOKEN", "<your-actual-hf-token>")
     return {"Authorization": f"Bearer {token}"} if token else {}
 
 
