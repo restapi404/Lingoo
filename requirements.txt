@@ -1,16 +1,9 @@
-# torch
-# transformers
-# sentence-transformers
-# scikit-learn
-# streamlit
-# requests
-
-
 # Core
 streamlit>=1.32.0
 requests>=2.31.0
 scikit-learn>=1.4.0
 sentence-transformers>=2.6.0
+huggingface-hub>=0.16.0
 
 # GPU path (only needed if CUDA is available)
 # torch>=2.1.0          # install separately: https://pytorch.org/get-started/locally/
